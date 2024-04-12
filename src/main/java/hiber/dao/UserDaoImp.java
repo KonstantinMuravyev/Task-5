@@ -11,19 +11,29 @@ import java.util.List;
 @Repository
 public class UserDaoImp implements UserDao {
 
-   @Autowired
-   private SessionFactory sessionFactory;
+    @Autowired
+    private SessionFactory sessionFactory;
 
-   @Override
-   public void add(User user) {
-      sessionFactory.getCurrentSession().save(user);
-   }
+    @Override
+    public void add(User user) {
+        sessionFactory.getCurrentSession().save(user);
+    }
 
-   @Override
-   @SuppressWarnings("unchecked")
-   public List<User> listUsers() {
-      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
-      return query.getResultList();
-   }
+    // Аннотация SuppressWarnings() позволяет нам указать, какие предупреждения игнорировать.
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<User> listUsers() {
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("from User");
+        return query.getResultList();
+    }
+
+    @Override
+    public User getUserCar(String model, int series) {
+        String hql = "from User where car.model =: carModelParam and car.series =: carSeriesParam";
+        return sessionFactory.getCurrentSession().createQuery(hql, User.class)
+                .setParameter("carModelParam", model)
+                .setParameter("carSeriesParam", series)
+                .getSingleResult();
+    }
 
 }
